@@ -37,9 +37,9 @@ Available variables are listed below with their default values (you can also see
 | site_domain | The domain to associate with the Nextcloud installation.
 | site_user | The username associated with the Nextcloud administrative account.
 | site_pass | The password associated with the Nextcloud administrative account.
-| nc_system_path | The web root for the Nextcloud installation. Defaults to /home/$system_user/nextcloud
+| nc_system_path | The web root for the Nextcloud installation. Defaults to /home/`system_user`/nextcloud
 | data_storage | Options: data_dir (default), swift_v2, swift_v3, s3. If any option other than data_dir is picked, the appropriate variables will need to be filled out to connect to object storage.
-| data_dir | The location of Nextcloud's data directory. Defaults to $nc_system_path/data_dir
+| data_dir | The location of Nextcloud's data directory. Defaults to `nc_system_path`/data_dir
 | postgres_user | The PostgreSQL system user, used to create databases
 | nc_db_name | The name of the database to associate with this Nextcloud installation.
 | nc_db_user | The name of the database user account to associate with this Nextcloud installation.
