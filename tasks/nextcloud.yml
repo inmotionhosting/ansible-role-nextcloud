@@ -15,7 +15,7 @@
     remote_src: yes
 
 #
-# MySQL
+# PostgreSQL
 #
 
 - name: (Nextcloud) Set random database password when not defined
@@ -60,7 +60,6 @@
   become: true
   become_user: "{{ system_user }}"
 
-# check for the current setting before resetting it here
 - name: (Nextcloud) Setup domain
   command: >-
     php occ config:system:set trusted_domains 1
@@ -70,10 +69,10 @@
   become: true
   become_user: "{{ system_user }}"
 
-#- name: (Nextcloud) Configure maintenance cron
-#  cron:
-#    name: nextcloud_maint
-#    state: present
-#    user: "{{ system_user }}"
-#    job: "php -f {{ nc_system_path }}/cron.php"
-#    minute: "*/5"
+- name: (Nextcloud) Configure maintenance cron
+  cron:
+    name: nextcloud_maint
+    state: present
+    user: "{{ system_user }}"
+    job: "php -f {{ nc_system_path }}/cron.php"
+    minute: "*/5"

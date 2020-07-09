@@ -10,6 +10,13 @@
     name: unzip
     state: present
 
+- name: (RedHat) Install crontab
+  package:
+    name: crontabs
+    state: present
+  when:
+    - ansible_os_family == "RedHat"
+
 #
 # Setup
 #
