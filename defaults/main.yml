@@ -11,7 +11,6 @@ system_user: "nextcloud"
 site_domain: "{{ ansible_fqdn }}"
 
 # Admin account
-site_email: "email@example.com"
 site_user: "example_username"
 site_pass: "example_password"
 
