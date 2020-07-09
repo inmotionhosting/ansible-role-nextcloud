@@ -1,4 +1,4 @@
-inmotionhosting.wordpress
+inmotionhosting.nextcloud
 =========
 
 Modular Ansible Role for deploying and configuring Nextcloud.
