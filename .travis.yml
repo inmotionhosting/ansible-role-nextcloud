@@ -9,7 +9,7 @@ addons:
 
 env:
   global:
-    - GIT_BASE="https://github.com/respheal"
+    - GIT_BASE="https://github.com/inmotionhosting"
     - ROLE_DIR="/home/travis/.ansible/roles"
   matrix:
     - MOLECULE_DISTRO="centos-7"
