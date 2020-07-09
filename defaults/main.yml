@@ -1,0 +1,115 @@
+---
+# defaults file for inmotion.nextcloud
+
+# Download location for nextcloud
+nextcloud_package: "https://download.nextcloud.com/server/releases/nextcloud-19.0.0.zip"
+
+# The system user that the Nextcloud installation will belong to.
+system_user: "nextcloud"
+
+# The domain to associate with the Nextcloud installation.
+site_domain: "{{ ansible_fqdn }}"
+
+# Admin account
+site_email: "email@example.com"
+site_user: "example_username"
+site_pass: "example_password"
+
+# The name of the folder in the above user's home directory that
+# WordPress will be installed to.
+nc_system_path: "/home/{{ system_user }}/nextcloud"
+
+# Options: data_dir, swift_v2, swift_v3, s3
+data_storage: "data_dir"
+# If data_dir is chosen, the following path will be the data_dir
+data_dir: "{{ nc_system_path }}/data"
+
+# These variables control the database name, user, and the user's password
+#
+# Note that by default 'nc_db_pass' is automatically generated for you
+# though this may be set to your desired password instead should this
+# be preferred.
+postgres_user: postgresql
+nc_db_name: "{{ system_user }}"
+nc_db_user: "{{ system_user }}"
+#nc_db_pass: "not_secure"
+
+# Whether a letsencrypt SSL should be generated.
+use_letsencrypt: false
+
+# Generate a random password. Used to create a safe password for the
+# Nextcloud database user via 'nc_db_pass'.
+pass_gen_alias: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+#
+# Apache Config
+#
+
+# Should be a multiple of 25
+max_request_workers: 250
+
+#
+# PHP Config
+#
+
+# Expected memory usage per PHP pool in MB
+php_proc_mem: 64
+# PHP memory allocation = server memory (MB) / php_proc_mem (MB) * children_buffer
+children_buffer: 0.75
+
+#
+# Redis
+#
+
+#Redis is disabled by default; may be configured in playbook
+use_redis: false
+
+redis_settings:
+  - setting: filelocking.enabled
+    value: true
+    type: boolean
+  - setting: memcache.locking
+    value: "\\\\OC\\\\Memcache\\\\Redis"
+    type: string
+  - setting: "redis host"
+    value: "localhost"
+    type: string
+  - setting: "redis port"
+    value: 6379
+    type: integer
+  - setting: "redis timeout"
+    value: 0.0
+    type: float
+
+#
+# External primary storage (Swift, S3)
+#
+
+# S3
+s3_bucket: "nextcloud"
+s3_autocreate: true
+s3_key: ""
+s3_secret: ""
+s3_hostname: ""
+s3_port: 1234
+s3_use_ssl: true
+s3_region: "optional"
+s3_use_path_style: true
+
+# Swift
+swift_username: ""
+swift_password: ""
+swift_bucket: "nextcloud"
+swift_autocreate: true
+swift_region: ""
+swift_url: ""
+swift_serviceName: swift
+
+#Swift V2
+swift_urlType: ""
+swift_tenantName: ""
+
+# Swift V3
+swift_user_domain_name: ""
+swift_scope_project_name: ""
+swift_scope_project_domain: ""

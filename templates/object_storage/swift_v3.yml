@@ -1,0 +1,30 @@
+<?php
+// {{ template_destpath }}
+// {{ ansible_managed }}
+$CONFIG = array (
+  'objectstore' => [
+          'class' => 'OC\\Files\\ObjectStore\\Swift',
+          'arguments' => [
+                  'autocreate' => {{ swift_autocreate }},
+                  'user' => [
+                          'name' => '{{ swift_username }}',
+                          'password' => '{{ swift_password }}',
+                          'domain' => [
+                                  'name' => '{{ swift_user_domain_name }}',
+                          ],
+                  ],
+                  'scope' => [
+                          'project' => [
+                                  'name' => '{{ swift_scope_project_name }}',
+                                  'domain' => [
+                                          'name' => '{{ swift_scope_project_domain }}',
+                                  ],
+                          ],
+                  ],
+                  'serviceName' => '{{ swift_serviceName }}',
+                  'region' => '{{ swift_region }}',
+                  'url' => '{{ swift_url }}',
+                  'bucket' => '{{ swift_bucket }}',
+          ],
+  ],
+);

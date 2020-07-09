@@ -1,0 +1,79 @@
+---
+# install-Nextcloud.yml
+
+- name: (Nextcloud) Download Nextcloud
+  get_url:
+    url: "{{ nextcloud_package }}"
+    dest: /home/{{ system_user }}/tmp/nextcloud.zip
+
+- name: (Nextcloud) Extract Nextcloud
+  unarchive:
+    src: /home/{{ system_user }}/tmp/nextcloud.zip
+    dest: /home/{{ system_user }}
+    owner: "{{ system_user }}"
+    group: "{{ system_user }}"
+    remote_src: yes
+
+#
+# MySQL
+#
+
+- name: (Nextcloud) Set random database password when not defined
+  set_fact:
+    nc_db_pass: "{{ pass_gen_alias }}"
+  when: nc_db_pass is undefined
+
+- name: (Nextcloud) Create Nextcloud database
+  postgresql_db:
+    name: "{{ nc_db_name }}"
+    state: present
+  register: nc_db_setup
+  become: true
+  become_user: "{{ postgres_user }}"
+
+- name: (Nextcloud) Create DB user
+  postgresql_user:
+    db: "{{ nc_db_name }}"
+    name: "{{ nc_db_user }}"
+    password: "{{ nc_db_pass }}"
+    priv: "ALL"
+    state: present
+  become: true
+  become_user: "{{ postgres_user }}"
+
+#
+# Nextcloud
+#
+
+- name: (Nextcloud) Install Nextcloud core
+  command: >-
+    php occ maintenance:install
+    --database pgsql
+    --database-name "{{ nc_db_name }}"
+    --database-user "{{ nc_db_user }}"
+    --database-pass "{{ nc_db_pass }}"
+    --admin-user "{{ site_user }}"
+    --admin-pass "{{ site_pass }}"
+    --data-dir "{{ data_dir }}"
+  args:
+    chdir: "{{ nc_system_path }}"
+  become: true
+  become_user: "{{ system_user }}"
+
+# check for the current setting before resetting it here
+- name: (Nextcloud) Setup domain
+  command: >-
+    php occ config:system:set trusted_domains 1
+    --value="{{ site_domain }}"
+  args:
+    chdir: "{{ nc_system_path }}"
+  become: true
+  become_user: "{{ system_user }}"
+
+#- name: (Nextcloud) Configure maintenance cron
+#  cron:
+#    name: nextcloud_maint
+#    state: present
+#    user: "{{ system_user }}"
+#    job: "php -f {{ nc_system_path }}/cron.php"
+#    minute: "*/5"
