@@ -1,0 +1,29 @@
+<?php
+// {{ template_destpath }}
+// {{ ansible_managed }}
+$CONFIG = array (
+  'objectstore' => [
+          'class' => '\\OC\\Files\\ObjectStore\\Swift',
+          'arguments' => [
+                  'username' => '{{ swift_username }}',
+                  'password' => '{{ swift_password }}',
+                  // the container to store the data in
+                  'bucket' => '{{ swift_bucket }}',
+                  'autocreate' => {{ swift_autocreate }},
+                  'region' => '{{ swift_region }}',
+                  // The Identity / Keystone endpoint
+                  'url' => '{{ swift_url }}',
+{% if swift_tenantName %}
+                  // optional on some swift implementations
+                  'tenantName' => '{{ swift_tenantName }}',
+{% endif %}
+{% if swift_serviceName %}
+                  'serviceName' => '{{ swift_serviceName }}',
+{% endif %}
+{% if swift_urlType %}
+                  // The Interface / url Type, optional
+                  'urlType' => '{{ swift_urlType }}'
+{% endif %}
+          ],
+  ],
+);

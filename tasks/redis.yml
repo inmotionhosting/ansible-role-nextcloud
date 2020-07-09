@@ -1,0 +1,29 @@
+---
+
+- name: (Redis) Include Redis role
+  include_role:
+    name: inmotionhosting.redis
+
+- name: (Redis) Get Nextcloud Redis setting
+  command: >-
+    php occ config:system:get filelocking.enabled
+  args:
+    chdir: "{{ nc_system_path }}"
+  become: true
+  become_user: "{{ system_user }}"
+  register: filelocking
+  failed_when: false
+  changed_when: filelocking.stdout != "true"
+
+- name: (Redis) Configure Nextcloud for Redis
+  command: >-
+    php occ config:system:set {{ item.setting }}
+    --value={{ item.value }}
+    --type={{ item.type }}
+  args:
+    chdir: "{{ nc_system_path }}"
+  become: true
+  become_user: "{{ system_user }}"
+  when:
+    - filelocking.changed
+  with_items: "{{ redis_settings }}"
