@@ -6,7 +6,7 @@ driver:
   name: docker
 
 platforms:
-  - name: "${MOLECULE_NAME:-nextcloud}-${MOLECULE_ID:-local}-${MOLECULE_DISTRO:-centos-7}"
+  - name: "molecule-ansible-role-nextcloud-${MOLECULE_DISTRO:-centos-7}"
     image: "inmotionhosting/molecule-images:${MOLECULE_DISTRO:-centos-7}"
     command: ""
     pre_build_image: true
