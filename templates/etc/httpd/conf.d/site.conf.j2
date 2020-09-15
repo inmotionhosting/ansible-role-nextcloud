@@ -9,7 +9,7 @@
     ErrorLog /var/log/{{ apache_name }}/{{ site_domain }}-error.log
     CustomLog /var/log/{{ apache_name }}/{{ site_domain }}-access.log combined
 
-{% if use_letsencrypt and not use_ultrastack %}
+{% if use_letsencrypt %}
     Redirect permanent / https://{{ site_domain }}/
 {% else %}
     <Proxy "unix:{{ php_fpm_socket_path }}|fcgi://{{ system_user }}">
@@ -23,8 +23,10 @@
     DocumentRoot {{ nc_system_path }}/
     DirectoryIndex index.html index.php
 
+    TraceEnable Off
+
     <Directory {{ nc_system_path }}/>
-        Options FollowSymLinks Multiviews
+        Options FollowSymLinks
         AllowOverride All
         Require all granted
 
@@ -66,8 +68,10 @@
     DocumentRoot {{ nc_system_path }}
     DirectoryIndex index.html index.php
 
+    TraceEnable Off
+
     <Directory {{ nc_system_path }}>
-        Options FollowSymLinks Multiviews
+        Options FollowSymLinks
         AllowOverride All
         Require all granted
 
