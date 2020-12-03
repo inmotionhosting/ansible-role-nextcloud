@@ -28,7 +28,6 @@ data_dir: "{{ nc_system_path }}/data"
 # Note that by default 'nc_db_pass' is automatically generated for you
 # though this may be set to your desired password instead should this
 # be preferred.
-postgres_user: postgresql
 nc_db_name: "{{ system_user }}"
 nc_db_user: "{{ system_user }}"
 #nc_db_pass: "not_secure"

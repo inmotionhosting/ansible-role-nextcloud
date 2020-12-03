@@ -24,6 +24,5 @@
     chdir: "{{ nc_system_path }}"
   become: true
   become_user: "{{ system_user }}"
-  when:
-    - filelocking.changed
+  when: filelocking.changed
   with_items: "{{ redis_settings }}"

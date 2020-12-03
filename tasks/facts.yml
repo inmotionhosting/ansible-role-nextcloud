@@ -1,0 +1,77 @@
+---
+
+- name: Set lists of required variables
+  set_fact:
+    nc_required_strings:
+      - system_user
+      - pass_gen_alias
+      - nc_system_path
+      - nc_db_name
+      - nc_db_user
+      - nextcloud_package
+      - site_domain
+      - site_user
+      - site_pass
+    nc_required_ints:
+      - max_request_workers
+      - php_proc_mem
+
+- name: Check required Nextcloud variables (strings)
+  fail:
+    msg: |
+      Invalid value for variable for '{{ item }}': {{ lookup('vars', item) }}
+
+      Supported types  : String
+      Supported values : Any non-null string
+  when: >-
+    lookup('vars', item) is not string
+    or lookup('vars', item) == 0
+  with_items: "{{ nc_required_strings }}"
+
+- name: Check required Nextcloud variables (integers)
+  fail:
+    msg: |
+      Invalid value for variable for '{{ item }}': {{ lookup('vars', item) }}
+
+      Supported types  : Integer
+      Supported values : A number between 0-65535
+  when: >-
+    lookup('vars', item)|int < 0
+    or lookup('vars', item)|int > 65535
+  with_items: "{{ nc_required_ints }}"
+
+- name: Check required Nextcloud variables (children_buffer)
+  fail:
+    msg: |
+      Invalid value for variable for '{{ children_buffer }}': {{ children_buffer }}
+
+      Supported types  : Float
+      Supported values : A number between 0.0-1.0
+  when: >-
+    children_buffer|float < 0.0
+    or children_buffer|float >= 1.0
+
+- name: Check data_storage method
+  fail:
+    msg: |
+      Invalid value for variable 'data_storage': '{{ data_storage }}'
+
+      Supported types  : String
+      Supported values : "data_dir", "swift_v2", "swift_v3", "s3"
+  failed_when: >-
+    data_storage not in
+    ['data_dir', 'swift_v2', 'swift_v3', 's3']
+    or data_storage is not string
+    or data_storage == 0
+
+- name: Set and sanitize dependent RedHat vars
+  set_fact:
+    apache_config_path: /etc/httpd/conf.d
+  when:
+    - ansible_os_family == "RedHat"
+    - apache_config_path is undefined
+
+- name: Set postgres_user
+  set_fact:
+    postgres_user: postgres
+  when: postgres_user is undefined
