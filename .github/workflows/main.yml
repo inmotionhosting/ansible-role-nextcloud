@@ -1,0 +1,35 @@
+name: Ansible-Role-Nextcloud CI Testing
+
+on: 
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs: 
+  test:
+    runs-on: self-hosted
+    env:
+      GIT_BASE: "https://github.com/inmotionhosting"
+      ROLE_DIR: "~/.ansible/roles"
+    strategy:
+      fail-fast: false
+      matrix:
+        molecule_distro: [ centos-7, centos-8, debian-9, debian-10, ubuntu-18.04, ubuntu-20.04 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Pip install Repo Requirements
+        run: pip install -r requirements.txt
+      - name: Git Clone Needed Repos
+        run: |
+          git clone $GIT_BASE/ansible-role-apache $ROLE_DIR/ansible-role-apache
+          git clone $GIT_BASE/ansible-role-postgresql $ROLE_DIR/ansible-role-postgresql
+          git clone $GIT_BASE/ansible-role-php_fpm $ROLE_DIR/ansible-role-php_fpm
+      - name: Molecule Test
+        run: molecule test
+        env:
+          MOLECULE_DISTRO: ${{ matrix.molecule_distro }}
