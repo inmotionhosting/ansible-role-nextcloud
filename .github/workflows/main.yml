@@ -38,3 +38,15 @@ jobs:
         run: molecule test
         env:
           MOLECULE_DISTRO: ${{ matrix.molecule_distro }}
+
+  cleanup:
+    needs: test
+    runs-on: self-hosted
+    env:
+      ROLE_DIR: "/home/ubuntu/.ansible/roles"
+    steps:
+      - name: Clean Up Repos
+        run: |
+          rm -rf $ROLE_DIR/ansible-role-apache
+          rm -rf $ROLE_DIR/ansible-role-postgresql
+          rm -rf $ROLE_DIR/ansible-role-php_fpm
