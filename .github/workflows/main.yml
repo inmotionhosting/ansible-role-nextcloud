@@ -11,7 +11,7 @@ jobs:
     runs-on: self-hosted
     env:
       GIT_BASE: "https://github.com/inmotionhosting"
-      ROLE_DIR: "~/.ansible/roles"
+      ROLE_DIR: "/home/ubuntu/.ansible/roles"
     strategy:
       fail-fast: false
       matrix:
