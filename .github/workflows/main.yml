@@ -7,46 +7,33 @@ on:
     branches: [ master ]
 
 jobs: 
-  setup:
-    runs-on: self-hosted
-    env:
-      GIT_BASE: "https://github.com/inmotionhosting"
-      ROLE_DIR: "/home/ubuntu/.ansible/roles"
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python3
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-      - name: Pip install Repo Requirements
-        run: pip install -r requirements.txt
-      - name: Git Clone Needed Repos
-        run: |
-          git clone $GIT_BASE/ansible-role-apache $ROLE_DIR/ansible-role-apache
-          git clone $GIT_BASE/ansible-role-postgresql $ROLE_DIR/ansible-role-postgresql
-          git clone $GIT_BASE/ansible-role-php_fpm $ROLE_DIR/ansible-role-php_fpm
-
   test:
-    needs: setup
     runs-on: self-hosted
     strategy:
       fail-fast: false
       matrix:
         molecule_distro: [ centos-7, centos-8, debian-9, debian-10, ubuntu-18.04, ubuntu-20.04 ]
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: inmotionhosting/ansible-role-apache
+          path: ./ansible-role-apache
+      - uses: actions/checkout@v2
+        with:
+          repository: inmotionhosting/ansible-role-postgresql
+          path: ./ansible-role-postgresql
+      - uses: actions/checkout@v2
+        with:
+          repository: inmotionhosting/ansible-role-php_fpm
+          path: ./ansible-role-php_fpm
+      - name: Setup Python3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Pip install Repo Requirements
+        run: pip install -r requirements.txt
       - name: Molecule Test
         run: molecule test
         env:
           MOLECULE_DISTRO: ${{ matrix.molecule_distro }}
-
-  cleanup:
-    needs: test
-    runs-on: self-hosted
-    env:
-      ROLE_DIR: "/home/ubuntu/.ansible/roles"
-    steps:
-      - name: Clean Up Repos
-        run: |
-          rm -rf $ROLE_DIR/ansible-role-apache
-          rm -rf $ROLE_DIR/ansible-role-postgresql
-          rm -rf $ROLE_DIR/ansible-role-php_fpm
